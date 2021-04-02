@@ -1,0 +1,75 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    links:
+      - consul
+    ports:
+      - "8080:8080"
+  consul:
+    command: agent -server -bootstrap -advertise ${HOST_IP}
+    image: progrium/consul
+    container_name: consul
+    logging:
+        driver: json-file
+    ports:
+      - "8500:8500"
+  servicio-producto:
+    image: servicio-producto:latest
+    logging:
+       driver: json-file
+    volumes:
+      - ./:/app
+    depends_on:
+      - mysql
+    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_ventas
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: root
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DB: db_ventas
+  servicio-cliente:
+    image: servicio-cliente:latest
+    logging:
+       driver: json-file
+    volumes:
+      - ./:/app
+    depends_on:
+      - mysql
+    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_ventas
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: root
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DB: db_ventas
+  servicio-factura:
+    image: servicio-factura:latest
+    logging:
+       driver: json-file
+    volumes:
+      - ./:/app
+    depends_on:
+      - mysql
+    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_ventas
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: root
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DB: db_ventas
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - ventas-db:/var/liv/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_ventas
+volumes:
+  ventas-db:
