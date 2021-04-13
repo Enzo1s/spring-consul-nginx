@@ -8,15 +8,16 @@ services:
     ports:
       - "8080:8080"
   consul:
-    command: agent -server -bootstrap -advertise ${HOST_IP}
     image: progrium/consul
     container_name: consul
+    command: -server -bootstrap -advertise 192.168.99.100
     logging:
         driver: json-file
     ports:
       - "8500:8500"
   servicio-producto:
     image: servicio-producto:latest
+    container_name: servicioProducto
     logging:
        driver: json-file
     volumes:
@@ -33,6 +34,7 @@ services:
       MYSQL_DB: db_ventas
   servicio-cliente:
     image: servicio-cliente:latest
+    container_name: servicioCliente
     logging:
        driver: json-file
     volumes:
@@ -40,15 +42,13 @@ services:
     depends_on:
       - mysql
     environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_ventas
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: root
       MYSQL_HOST: mysql
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_DB: db_ventas
   servicio-factura:
     image: servicio-factura:latest
+    container_name: servicioFactura
     logging:
        driver: json-file
     volumes:
@@ -56,9 +56,6 @@ services:
     depends_on:
       - mysql
     environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_ventas
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: root
       MYSQL_HOST: mysql
       MYSQL_USER: root
       MYSQL_PASSWORD: root
